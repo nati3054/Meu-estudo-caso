@@ -6,7 +6,7 @@ export interface Produto {
   preco: number;
 }
 
-const API_URL = "http://leoproti.com.br:8004/produtos";
+const API_URL = "https://proweb.leoproti.com.br/produtos";
 
 const listar = async (): Promise<Produto[]> => {
   const { data } = await axios.get(API_URL);
