@@ -7,13 +7,25 @@ import produtoService, { Produto } from "../../scripts/produtoService";
 export default function Produtos() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const carregarProdutos = async () => {
     setLoading(true);
+    setErrorMessage(null);
     try {
       const lista = await produtoService.listar();
       setProdutos(lista);
+    } catch (error) {
+      console.error("Erro ao carregar produtos", error);
+      setProdutos([]);
+      setErrorMessage(
+        "Nao foi possivel carregar os produtos. Verifique sua conexao e tente novamente."
+      );
+      Alert.alert(
+        "Erro",
+        "Nao foi possivel carregar os produtos. Verifique sua conexao e tente novamente."
+      );
     } finally {
       setLoading(false);
     }
@@ -29,10 +41,18 @@ export default function Produtos() {
       {
         text: "Excluir",
         style: "destructive",
-        // Use replace para evitar empilhar a navegação ao recarregar a lista
+        // Use replace para evitar empilhar a navegacao ao recarregar a lista
         onPress: async () => {
-          await produtoService.excluir(id);
-          router.replace("/produtos");
+          try {
+            await produtoService.excluir(id);
+            router.replace("/produtos");
+          } catch (error) {
+            console.error("Erro ao excluir produto", error);
+            Alert.alert(
+              "Erro",
+              "Nao foi possivel excluir o produto. Tente novamente."
+            );
+          }
         },
       },
     ]);
@@ -71,9 +91,16 @@ export default function Produtos() {
           </Card>
         )}
         ListEmptyComponent={
-          <Text style={{ textAlign: "center", marginTop: 20 }}>
-            Nenhum produto cadastrado.
-          </Text>
+          <View style={{ alignItems: "center", marginTop: 20 }}>
+            <Text style={{ textAlign: "center", marginBottom: 12 }}>
+              {errorMessage ?? "Nenhum produto cadastrado."}
+            </Text>
+            {errorMessage && (
+              <Button mode="outlined" onPress={carregarProdutos}>
+                Tentar novamente
+              </Button>
+            )}
+          </View>
         }
       />
       <FAB
@@ -83,7 +110,6 @@ export default function Produtos() {
           right: 16,
           bottom: 16,
           backgroundColor: "#1976d2",
-          pointerEvents: "auto", // Adicionado ao objeto style
         }}
         onPress={() => router.replace("/produtos/novo")}
         color="#fff"
