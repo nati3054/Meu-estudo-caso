@@ -3,40 +3,43 @@ import { PaperProvider, DefaultTheme } from "react-native-paper";
 import { useEffect } from "react";
 import { StatusBar } from "react-native";
 
-// Tema global claro com azul
-const lightBlueTheme = {
+const palette = {
+  primary: "#6C63FF",
+  background: "#F7F5FF",
+  surface: "#FFFFFF",
+  text: "#1F1B2F",
+};
+
+const lavenderTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: "#f5fafd",
-    surface: "#fff",
-    primary: "#1976d2",
-    text: "#222",
-    onSurface: "#222",
-    onBackground: "#222",
+    background: palette.background,
+    surface: palette.surface,
+    primary: palette.primary,
+    text: palette.text,
+    onSurface: palette.text,
+    onBackground: palette.text,
   },
 };
 
 export default function RootLayout() {
   useEffect(() => {
     StatusBar.setBarStyle("light-content");
-    StatusBar.setBackgroundColor("#1976d2");
+    StatusBar.setBackgroundColor(palette.primary);
   }, []);
 
   return (
-    <PaperProvider theme={lightBlueTheme}>
+    <PaperProvider theme={lavenderTheme}>
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: "#1976d2" },
+          headerStyle: { backgroundColor: palette.primary },
           headerTintColor: "#fff",
           headerTitleAlign: "center",
-          contentStyle: { backgroundColor: "#f5fafd" },
+          contentStyle: { backgroundColor: palette.background },
         }}
       >
-        <Stack.Screen
-          name="produtos/index"
-          options={{ title: "Lista de Produtos" }}
-        />
+        <Stack.Screen name="produtos/index" options={{ title: "Lista" }} />
         <Stack.Screen
           name="produtos/novo"
           options={{ title: "Novo Produto" }}
